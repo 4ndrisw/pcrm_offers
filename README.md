@@ -1,2 +1,2 @@
-# pcrm_offers
-PCRM Offers
+# pcrm-offers
+PCRM offers
