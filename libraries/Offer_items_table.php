@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 include_once(APPPATH . 'libraries/App_items_table_template.php');
 
-class Schedule_items_table extends App_items_table_template
+class Offer_items_table extends App_items_table_template
 {
     public function __construct($transaction, $type, $for = 'html', $admin_preview = false)
     {
