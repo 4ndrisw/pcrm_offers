@@ -449,3 +449,65 @@ if (!function_exists('format_offer_info')) {
         return hooks()->apply_filters('offer_info_text', $format, ['offer' => $offer, 'for' => $for]);
     }
 }
+
+
+/**
+ * Prepares email template preview $data for the view
+ * @param  string $template    template class name
+ * @param  mixed $customer_id_or_email customer ID to fetch the primary contact email or email
+ * @return array
+ */
+function offer_prepare_mail_preview_data($template, $customer_id_or_email, $mailClassParams = [])
+{
+    $CI = &get_instance();
+
+    if (is_numeric($customer_id_or_email)) {
+        $contact = $CI->clients_model->get_contact(get_primary_contact_user_id($customer_id_or_email));
+        $email   = $contact ? $contact->email : '';
+    } else {
+        $email = $customer_id_or_email;
+    }
+
+    $CI->load->model('emails_model');
+
+    $data['template'] = $CI->offer_mail_template->prepare($email, $template);
+    $slug             = $CI->offer_mail_template->get_default_property_value('slug', $template, $mailClassParams);
+
+    $data['template_name'] = $slug;
+
+    $template_result = $CI->emails_model->get(['slug' => $slug, 'language' => 'english'], 'row');
+
+    $data['template_system_name'] = $template_result->name;
+    $data['template_id']          = $template_result->emailtemplateid;
+
+    $data['template_disabled'] = $template_result->active == 0;
+
+    return $data;
+}
+
+
+function offer_get_mail_template_path($class, &$params)
+{
+    log_activity('params get_mail_template_path 1 : ' .time() .' ' . json_encode($params));
+    $CI  = &get_instance();
+
+    $dir = module_libs_path(OFFERS_MODULE_NAME, 'mails/');
+
+    // Check if second parameter is module and is activated so we can get the class from the module path
+    // Also check if the first value is not equal to '/' e.q. when import is performed we set
+    // for some values which are blank to "/"
+    if (isset($params[0]) && is_string($params[0]) && $params[0] !== '/' && is_dir(module_dir_path($params[0]))) {
+        $module = $CI->app_modules->get($params[0]);
+
+        if ($module['activated'] === 1) {
+            $dir = module_libs_path($params[0]) . 'mails/';
+        }
+
+        unset($params[0]);
+        $params = array_values($params);
+        log_activity('params get_mail_template_path 2 : ' .time() .' ' . json_encode($params));
+        log_activity('params get_mail_template_path 3 : ' .time() .' ' . json_encode($dir));
+    }
+
+    return $dir . ucfirst($class) . '.php';
+}

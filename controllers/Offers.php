@@ -11,6 +11,14 @@ class Offers extends AdminController
         parent::__construct();
         $this->load->model('offers_model');
         $this->load->model('currencies_model');
+        include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_mail_template.php');
+        //$this->load->library('module_name/library_name'); 
+        $this->load->library('offer_mail_template'); 
+        //include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_send_to_customer.php');
+        //$this->load->library('module_name/library_name'); 
+        //$this->load->library('offer_send_to_customer'); 
+
+
     }
 
     public function index($offer_id = '')
@@ -295,8 +303,11 @@ class Offers extends AdminController
             die;
         }
 
-        //$this->app_mail_template->set_rel_id($offer->id);
-        //$data = prepare_mail_preview_data('offer_send_to_customer', $offer->email);
+        
+        //$this->offers_mail_template->set_rel_id($offer->id);
+        include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_send_to_customer.php');
+
+        $data = offer_prepare_mail_preview_data('offer_send_to_customer', $offer->email);
 
         $merge_fields = [];
 
@@ -314,7 +325,7 @@ class Offers extends AdminController
         $data['offer_merge_fields'] = $merge_fields;
         $data['offer']              = $offer;
         $data['totalNotes']            = total_rows(db_prefix() . 'notes', ['rel_id' => $id, 'rel_type' => 'offer']);
-        log_activity($to_return);
+
         if ($to_return == false) {
             $this->load->view('admin/offers/offers_preview_template', $data);
         } else {
