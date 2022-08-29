@@ -3,6 +3,153 @@ function init_offer(id) {
     load_small_table_item(id, '#offer', 'offerid', 'offers/get_offer_data_ajax', '.table-offers');
 }
 
+/*
+if ($("body").hasClass('offers-pipeline')) {
+    var offer_id = $('input[name="offerid"]').val();
+    offer_pipeline_open(offer_id);
+}
+*/
+
+
+function add_offer_comment() {
+    var comment = $('#comment').val();
+    if (comment == '') {
+        return;
+    }
+    var data = {};
+    data.content = comment;
+    data.offerid = offer_id;
+    $('body').append('<div class="dt-loader"></div>');
+    $.post(admin_url + 'offers/add_offer_comment', data).done(function (response) {
+        response = JSON.parse(response);
+        $('body').find('.dt-loader').remove();
+        if (response.success == true) {
+            $('#comment').val('');
+            get_offer_comments();
+        }
+    });
+}
+
+function get_offer_comments() {
+    if (typeof (offer_id) == 'undefined') {
+        return;
+    }
+    requestGet('offers/get_offer_comments/' + offer_id).done(function (response) {
+        $('body').find('#offer-comments').html(response);
+        update_comments_count('offer')
+    });
+}
+
+function remove_offer_comment(commentid) {
+    if (confirm_delete()) {
+        requestGetJSON('offers/remove_comment/' + commentid).done(function (response) {
+            if (response.success == true) {
+                $('[data-commentid="' + commentid + '"]').remove();
+                update_comments_count('offer')
+            }
+        });
+    }
+}
+
+function edit_offer_comment(id) {
+    var content = $('body').find('[data-offer-comment-edit-textarea="' + id + '"] textarea').val();
+    if (content != '') {
+        $.post(admin_url + 'offers/edit_comment/' + id, {
+            content: content
+        }).done(function (response) {
+            response = JSON.parse(response);
+            if (response.success == true) {
+                alert_float('success', response.message);
+                $('body').find('[data-offer-comment="' + id + '"]').html(nl2br(content));
+            }
+        });
+        toggle_offer_comment_edit(id);
+    }
+}
+
+function toggle_offer_comment_edit(id) {
+    $('body').find('[data-offer-comment="' + id + '"]').toggleClass('hide');
+    $('body').find('[data-offer-comment-edit-textarea="' + id + '"]').toggleClass('hide');
+}
+
+function offer_convert_template(invoker) {
+    var template = $(invoker).data('template');
+    var html_helper_selector;
+    if (template == 'estimate') {
+        html_helper_selector = 'estimate';
+    } else if (template == 'invoice') {
+        html_helper_selector = 'invoice';
+    } else {
+        return false;
+    }
+
+    requestGet('offers/get_' + html_helper_selector + '_convert_data/' + offer_id).done(function (data) {
+        if ($('.offer-pipeline-modal').is(':visible')) {
+            $('.offer-pipeline-modal').modal('hide');
+        }
+        $('#convert_helper').html(data);
+        $('#convert_to_' + html_helper_selector).modal({
+            show: true,
+            backdrop: 'static'
+        });
+        reorder_items();
+    });
+
+}
+
+function save_offer_content(manual) {
+    var editor = tinyMCE.activeEditor;
+    var data = {};
+    data.offer_id = offer_id;
+    data.content = editor.getContent();
+    $.post(admin_url + 'offers/save_offer_data', data).done(function (response) {
+        response = JSON.parse(response);
+        if (typeof (manual) != 'undefined') {
+            // Show some message to the user if saved via CTRL + S
+            alert_float('success', response.message);
+        }
+        // Invokes to set dirty to false
+        editor.save();
+    }).fail(function (error) {
+        var response = JSON.parse(error.responseText);
+        alert_float('danger', response.message);
+    });
+}
+
+// Proposal sync data in case eq mail is changed, shown for lead and customers.
+function sync_offers_data(rel_id, rel_type) {
+    var data = {};
+    var modal_sync = $('#sync_data_offer_data');
+    data.country = modal_sync.find('select[name="country"]').val();
+    data.zip = modal_sync.find('input[name="zip"]').val();
+    data.state = modal_sync.find('input[name="state"]').val();
+    data.city = modal_sync.find('input[name="city"]').val();
+    data.address = modal_sync.find('textarea[name="address"]').val();
+    data.phone = modal_sync.find('input[name="phone"]').val();
+    data.rel_id = rel_id;
+    data.rel_type = rel_type;
+    $.post(admin_url + 'offers/sync_data', data).done(function (response) {
+        response = JSON.parse(response);
+        alert_float('success', response.message);
+        modal_sync.modal('hide');
+    });
+}
+
+
+// Delete offer attachment
+function delete_offer_attachment(id) {
+    if (confirm_delete()) {
+        requestGet('offers/delete_attachment/' + id).done(function (success) {
+            if (success == 1) {
+                var rel_id = $("body").find('input[name="_attachment_sale_id"]').val();
+                $("body").find('[data-attachment-id="' + id + '"]').remove();
+                $("body").hasClass('offers-pipeline') ? offer_pipeline_open(rel_id) : init_offer(rel_id);
+            }
+        }).fail(function (error) {
+            alert_float('danger', error.responseText);
+        });
+    }
+}
 
 // Used when estimate is updated from pipeline. eq changed order or moved to another status
 function estimates_pipeline_update(ui, object) {
@@ -237,3 +384,5 @@ function reload_offers_tables() {
         }
     });
 }
+
+

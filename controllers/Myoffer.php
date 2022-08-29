@@ -2,9 +2,24 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Offer extends ClientsController
+class Myoffer extends ClientsController
 {
-    public function index($id, $hash)
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('offers_model');
+        $this->load->model('currencies_model');
+        //include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_mail_template.php');
+        //$this->load->library('module_name/library_name'); 
+        //$this->load->library('offer_mail_template'); 
+        //include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_send_to_customer.php');
+        //$this->load->library('module_name/library_name'); 
+        //$this->load->library('offer_send_to_customer'); 
+
+
+    }
+
+    public function show($id, $hash)
     {
         check_offer_restrictions($id, $hash);
         $offer = $this->offers_model->get($id);
@@ -19,24 +34,6 @@ class Offer extends ClientsController
         if ($this->input->post()) {
             $action = $this->input->post('action');
             switch ($action) {
-                case 'offer_pdf':
-
-                    $offer_number = format_offer_number($id);
-                    $companyname     = get_option('invoice_company_name');
-                    if ($companyname != '') {
-                        $offer_number .= '-' . mb_strtoupper(slug_it($companyname), 'UTF-8');
-                    }
-
-                    try {
-                        $pdf = offer_pdf($offer);
-                    } catch (Exception $e) {
-                        echo $e->getMessage();
-                        die;
-                    }
-
-                    $pdf->Output($offer_number . '.pdf', 'D');
-
-                    break;
                 case 'offer_comment':
                     // comment is blank
                     if (!$this->input->post('content')) {
@@ -81,6 +78,7 @@ class Offer extends ClientsController
         $this->disableSubMenu();
 
         $data['title']     = $offer->subject;
+        $data['can_be_accepted']               = false;
         $data['offer']  = hooks()->apply_filters('offer_html_pdf_data', $offer);
         $data['bodyclass'] = 'offer offer-view';
 
@@ -94,11 +92,65 @@ class Offer extends ClientsController
         $data['comments'] = $this->offers_model->get_comments($id);
         add_views_tracking('offer', $id);
         hooks()->do_action('offer_html_viewed', $id);
+        hooks()->add_action('app_admin_head', 'offers_head_component');
+        
         $this->app_css->remove('reset-css','customers-area-default');
+
         $data                      = hooks()->apply_filters('offer_customers_area_view_data', $data);
         no_index_customers_area();
         $this->data($data);
-        $this->view('viewoffer');
+
+        $this->view('themes/'. active_clients_theme() .'/views/offers/offer_html');
+        
         $this->layout();
+    }
+
+
+    public function pdf($id)
+    {
+        if (!$id) {
+            redirect(admin_url('offers'));
+        }
+
+        $canView = user_can_view_offer($id);
+        if (!$canView) {
+            access_denied('offers');
+        } else {
+            if (!has_permission('offers', '', 'view') && !has_permission('offers', '', 'view_own') && $canView == false) {
+                access_denied('offers');
+            }
+        }
+
+        $offer = $this->offers_model->get($id);
+        $offer_number = format_offer_number($id);
+        /*
+        echo '<pre>';
+        var_dump($offer);
+        echo '</pre>';
+        die();
+        */
+
+        try {
+            $pdf = offer_pdf($offer);
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+            echo $message;
+            if (strpos($message, 'Unable to get the size of the image') !== false) {
+                show_pdf_unable_to_get_image_size_error();
+            }
+            die;
+        }
+
+        $type = 'D';
+
+        if ($this->input->get('output_type')) {
+            $type = $this->input->get('output_type');
+        }
+
+        if ($this->input->get('print')) {
+            $type = 'I';
+        }
+
+        $pdf->Output($offer_number . '.pdf', $type);
     }
 }

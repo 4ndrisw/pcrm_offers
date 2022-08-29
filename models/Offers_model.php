@@ -238,6 +238,17 @@ class Offers_model extends App_Model
         }
 
         unset($data['removed_items']);
+        unset($data['tags']);
+        unset($data['item_select']);
+        unset($data['description']);
+        unset($data['long_description']);
+        unset($data['quantity']);
+        unset($data['unit']);
+        unset($data['rate']);
+        unset($data['taxname']);
+
+
+
 
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'offers', $data);
@@ -364,6 +375,13 @@ class Offers_model extends App_Model
                 */
             }
 
+            $offer->client = $this->clients_model->get($offer->clientid);
+
+            if (!$offer->client) {
+                $offer->client          = new stdClass();
+                $offer->client->company = $offer->deleted_customer_name;
+            }
+            
             return $offer;
         }
 

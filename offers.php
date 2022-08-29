@@ -12,13 +12,17 @@ Requires at least: 2.3.*
 define('OFFERS_MODULE_NAME', 'offers');
 define('OFFER_ATTACHMENTS_FOLDER', FCPATH . 'uploads/offers/');
 
-hooks()->add_filter('before_offer_updated', '_format_data_offer_feature');
-hooks()->add_filter('before_offer_added', '_format_data_offer_feature');
+//hooks()->add_filter('before_offer_updated', '_format_data_offer_feature');
+//hooks()->add_filter('before_offer_added', '_format_data_offer_feature');
 
 hooks()->add_action('after_cron_run', 'offers_notification');
 hooks()->add_action('admin_init', 'offers_module_init_menu_items');
 hooks()->add_action('admin_init', 'offers_permissions');
+hooks()->add_action('admin_init', 'offers_settings_tab');
 hooks()->add_action('clients_init', 'offers_clients_area_menu_items');
+
+hooks()->add_action('app_admin_head', 'offers_head_component');
+hooks()->add_action('app_admin_footer', 'offers_footer_js_component');
 
 hooks()->add_action('staff_member_deleted', 'offers_staff_member_deleted');
 
@@ -31,6 +35,7 @@ hooks()->add_filter('module_offers_action_links', 'module_offers_action_links');
 
 function offers_add_dashboard_widget($widgets)
 {
+    /*
     $widgets[] = [
         'path'      => 'offers/widgets/offer_this_week',
         'container' => 'left-8',
@@ -39,6 +44,7 @@ function offers_add_dashboard_widget($widgets)
         'path'      => 'offers/widgets/project_not_offerd',
         'container' => 'left-8',
     ];
+    */
 
     return $widgets;
 }
@@ -214,7 +220,7 @@ function offers_settings_tab()
 $CI = &get_instance();
 $CI->load->helper(OFFERS_MODULE_NAME . '/offers');
 
-if(($CI->uri->segment(0)=='admin' && $CI->uri->segment(1)=='offers') || $CI->uri->segment(1)=='offers'){
+if(($CI->uri->segment(1)=='admin' && $CI->uri->segment(2)=='offers') || $CI->uri->segment(1)=='offers'){
     $CI->app_css->add(OFFERS_MODULE_NAME.'-css', base_url('modules/'.OFFERS_MODULE_NAME.'/assets/css/'.OFFERS_MODULE_NAME.'.css'));
     $CI->app_scripts->add(OFFERS_MODULE_NAME.'-js', base_url('modules/'.OFFERS_MODULE_NAME.'/assets/js/'.OFFERS_MODULE_NAME.'.js'));
 }

@@ -27,3 +27,14 @@ tr.offer_status_1 {
     background: #b7ab00;
     color: #000;
 }
+
+.customers.offer-view #wrapper {
+    margin-left: 0;
+}
+
+body table.offer-items-preview td.description span strong{
+    color: #ececec !important;
+}
+body table.offer-items-preview td.description span {
+    color: #989898 !important;
+}

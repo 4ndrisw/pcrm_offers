@@ -106,11 +106,12 @@ $rResult = $result['rResult'];
 foreach ($rResult as $aRow) {
     $row = [];
 
+    //$numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
     $numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
 
     $numberOutput .= '<div class="row-options">';
 
-    $numberOutput .= '<a href="' . site_url('offer/' . $aRow[db_prefix() . 'offers.id'] . '/' . $aRow['hash']) . '" target="_blank">' . _l('view') . '</a>';
+    $numberOutput .= '<a href="' . site_url('offers/show/' . $aRow[db_prefix() . 'offers.id'] . '/' . $aRow['hash']) . '" target="_blank">' . _l('view') . '</a>';
     if (has_permission('offers', '', 'edit')) {
         $numberOutput .= ' | <a href="' . admin_url('offers/offer/' . $aRow[db_prefix() . 'offers.id']) . '">' . _l('edit') . '</a>';
     }

@@ -23,6 +23,9 @@ class Offers extends AdminController
 
     public function index($offer_id = '')
     {
+        if (is_numeric($offer_id)) {
+            redirect(admin_url('offers/#' . $offer_id));
+        }
         $this->list_offers($offer_id);
     }
 
@@ -61,6 +64,8 @@ class Offers extends AdminController
             $data['statuses']              = $this->offers_model->get_statuses();
             $data['offers_sale_agents'] = $this->offers_model->get_sale_agents();
             $data['years']                 = $this->offers_model->get_offers_years();
+            
+            log_activity(json_encode($data));
             $this->load->view('admin/offers/manage', $data);
         }
     }
@@ -80,7 +85,7 @@ class Offers extends AdminController
 
     public function offer_relations($rel_id, $rel_type)
     {
-        $this->app->get_table_data(module_views_path('offers', 'tables/proposals_relations', [
+        $this->app->get_table_data(module_views_path('offers', 'tables/offers_relations', [
             'rel_id'   => $rel_id,
             'rel_type' => $rel_type,
         ]));
@@ -307,7 +312,7 @@ class Offers extends AdminController
         //$this->offers_mail_template->set_rel_id($offer->id);
         include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_send_to_customer.php');
 
-        $data = offer_prepare_mail_preview_data('offer_send_to_customer', $offer->email);
+        //$data = offer_prepare_mail_preview_data('offer_send_to_customer', $offer->email);
 
         $merge_fields = [];
 

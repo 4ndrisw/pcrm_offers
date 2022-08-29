@@ -15,9 +15,6 @@
                foreach($years as $year){
                 echo form_hidden('year_'.$year['year'],$year['year']);
                }
-               foreach($offers_sale_agents as $agent){
-                echo form_hidden('sale_agent_'.$agent['sale_agent']);
-               }
                echo form_hidden('leads_related');
                echo form_hidden('customers_related');
                echo form_hidden('expired');

@@ -11,4 +11,3 @@ $route['offers/list'] = 'myoffer/list';
 $route['offers/show/(:num)/(:any)'] = 'myoffer/show/$1/$2';
 $route['offers/office/(:num)/(:any)'] = 'myoffer/office/$1/$2';
 $route['offers/pdf/(:num)'] = 'myoffer/pdf/$1';
-$route['offers/office_pdf/(:num)'] = 'myoffer/office_pdf/$1';

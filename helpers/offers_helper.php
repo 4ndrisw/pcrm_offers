@@ -2,22 +2,16 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-hooks()->add_action('app_admin_head', 'offers_head_component');
-hooks()->add_action('app_admin_footer', 'offers_footer_js_component');
-hooks()->add_action('admin_init', 'offers_settings_tab');
-
-
-
 /**
  * Injects theme CSS
  * @return null
  */
 function offers_head_component()
 {
+        echo '<link rel="stylesheet" type="text/css" id="offers-css" href="'. base_url('modules/offers/assets/css/offers.css').'">';
     $CI = &get_instance();
     if (($CI->uri->segment(1) == 'admin' && $CI->uri->segment(2) == 'offers') ||
         $CI->uri->segment(1) == 'offers'){
-        echo '<link href="' . base_url('modules/offers/assets/css/offers.css') . '"  rel="stylesheet" type="text/css" >';
     }
 }
 
@@ -28,12 +22,25 @@ function offers_head_component()
  */
 function offers_footer_js_component()
 {
+        echo '<script src="' . base_url('modules/offers/assets/js/offers.js') . '"></script>';
     $CI = &get_instance();
     if (($CI->uri->segment(1) == 'admin' && $CI->uri->segment(2) == 'offers') ||
         ($CI->uri->segment(1) == 'admin' && $CI->uri->segment(2) == 'list_offers') ||
         $CI->uri->segment(1) == 'offers'){
-        echo '<script src="' . base_url('modules/offers/assets/js/offers.js') . '"></script>';
     }
+}
+
+
+/**
+ * Prepare general offer pdf
+ * @since  Version 1.0.2
+ * @param  object $offer offer as object with all necessary fields
+ * @param  string $tag tag for bulk pdf exporter
+ * @return mixed object
+ */
+function offer_pdf($offer, $tag = '')
+{
+    return app_pdf('offer',  module_libs_path(OFFERS_MODULE_NAME) . 'pdf/Offer_pdf', $offer, $tag);
 }
 
 
@@ -488,7 +495,7 @@ function offer_prepare_mail_preview_data($template, $customer_id_or_email, $mail
 
 function offer_get_mail_template_path($class, &$params)
 {
-    log_activity('params get_mail_template_path 1 : ' .time() .' ' . json_encode($params));
+    //log_activity('params get_mail_template_path 1 : ' .time() .' ' . json_encode($params));
     $CI  = &get_instance();
 
     $dir = module_libs_path(OFFERS_MODULE_NAME, 'mails/');
@@ -505,9 +512,36 @@ function offer_get_mail_template_path($class, &$params)
 
         unset($params[0]);
         $params = array_values($params);
-        log_activity('params get_mail_template_path 2 : ' .time() .' ' . json_encode($params));
-        log_activity('params get_mail_template_path 3 : ' .time() .' ' . json_encode($dir));
+        //log_activity('params get_mail_template_path 2 : ' .time() .' ' . json_encode($params));
+        //log_activity('params get_mail_template_path 3 : ' .time() .' ' . json_encode($dir));
     }
 
     return $dir . ucfirst($class) . '.php';
+}
+
+
+/**
+ * Return RGBa offer status color for PDF documents
+ * @param  mixed $status_id current offer status
+ * @return string
+ */
+function offer_status_color_pdf($status_id)
+{
+    if ($status_id == 1) {
+        $statusColor = '119, 119, 119';
+    } elseif ($status_id == 2) {
+        // Sent
+        $statusColor = '3, 169, 244';
+    } elseif ($status_id == 3) {
+        //Declines
+        $statusColor = '252, 45, 66';
+    } elseif ($status_id == 4) {
+        //Accepted
+        $statusColor = '0, 191, 54';
+    } else {
+        // Expired
+        $statusColor = '255, 111, 0';
+    }
+
+    return hooks()->apply_filters('offer_status_pdf_color', $statusColor, $status_id);
 }

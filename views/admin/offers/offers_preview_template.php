@@ -28,7 +28,7 @@
                </li>
                <li role="presentation">
                   <a href="#tab_reminders" onclick="initDataTable('.table-reminders', admin_url + 'misc/get_reminders/' + <?php echo $offer->id ;?> + '/' + 'offer', undefined, undefined, undefined,[1,'asc']); return false;" aria-controls="tab_reminders" role="tab" data-toggle="tab">
-                  <?php echo _l('estimate_reminders'); ?>
+                  <?php echo _l('offer_reminders'); ?>
                   <?php
                      $total_reminders = total_rows(db_prefix().'reminders',
                       array(
@@ -51,7 +51,7 @@
                </li>
                <li role="presentation" class="tab-separator">
                      <a href="#tab_notes" onclick="get_sales_notes(<?php echo $offer->id; ?>,'offers'); return false" aria-controls="tab_notes" role="tab" data-toggle="tab">
-                     <?php echo _l('estimate_notes'); ?>
+                     <?php echo _l('offer_notes'); ?>
                      <span class="notes-total">
                         <?php if($totalNotes > 0){ ?>
                            <span class="badge"><?php echo $totalNotes; ?></span>
@@ -108,11 +108,11 @@
             <div class="btn-group">
                <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-file-pdf-o"></i><?php if(is_mobile()){echo ' PDF';} ?> <span class="caret"></span></a>
                <ul class="dropdown-menu dropdown-menu-right">
-                  <li class="hidden-xs"><a href="<?php echo admin_url('offers/pdf/'.$offer->id.'?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
-                  <li class="hidden-xs"><a href="<?php echo admin_url('offers/pdf/'.$offer->id.'?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
-                  <li><a href="<?php echo admin_url('offers/pdf/'.$offer->id); ?>"><?php echo _l('download'); ?></a></li>
+                  <li class="hidden-xs"><a href="<?php echo site_url('offers/pdf/'.$offer->id.'?output_type=I'); ?>"><?php echo _l('view_pdf'); ?></a></li>
+                  <li class="hidden-xs"><a href="<?php echo site_url('offers/pdf/'.$offer->id.'?output_type=I'); ?>" target="_blank"><?php echo _l('view_pdf_in_new_window'); ?></a></li>
+                  <li><a href="<?php echo site_url('offers/pdf/'.$offer->id); ?>"><?php echo _l('download'); ?></a></li>
                   <li>
-                     <a href="<?php echo admin_url('offers/pdf/'.$offer->id.'?print=true'); ?>" target="_blank">
+                     <a href="<?php echo site_url('offers/pdf/'.$offer->id.'?print=true'); ?>" target="_blank">
                      <?php echo _l('print'); ?>
                      </a>
                   </li>
@@ -141,7 +141,7 @@
                      <a href="<?php echo admin_url() . 'offers/copy/'.$offer->id; ?>"><?php echo _l('offer_copy'); ?></a>
                   </li>
                   <?php } ?>
-                  <?php if($offer->estimate_id == NULL && $offer->invoice_id == NULL){ ?>
+                  <?php if($offer->id == NULL && $offer->invoice_id == NULL){ ?>
                   <?php foreach($offer_statuses as $status){
                      if(has_permission('offers','','edit')){
                       if($offer->status != $status){ ?>
@@ -165,8 +165,8 @@
                   <?php } ?>
                </ul>
             </div>
-            <?php if($offer->estimate_id == NULL && $offer->invoice_id == NULL){ ?>
-            <?php if(has_permission('estimates','','create') || has_permission('invoices','','create')){ ?>
+            <?php if($offer->id == NULL && $offer->invoice_id == NULL){ ?>
+            <?php if(has_permission('offers','','create') || has_permission('invoices','','create')){ ?>
             <div class="btn-group">
                <button type="button" class="btn btn-success dropdown-toggle<?php if($offer->rel_type == 'customer' && total_rows(db_prefix().'clients',array('active'=>0,'userid'=>$offer->rel_id)) > 0){echo ' disabled';} ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                <?php echo _l('offer_convert'); ?> <span class="caret"></span>
@@ -186,8 +186,8 @@
                      $help_text = 'offer_convert_not_related_help';
                      }
                      ?>
-                  <?php if(has_permission('estimates','','create')){ ?>
-                  <li <?php if($disable_convert){ echo 'data-toggle="tooltip" title="'._l($help_text,_l('offer_convert_estimate')).'"';} ?>><a href="#" <?php if($disable_convert){ echo 'style="cursor:not-allowed;" onclick="return false;"';} else {echo 'data-template="estimate" onclick="offer_convert_template(this); return false;"';} ?>><?php echo _l('offer_convert_estimate'); ?></a></li>
+                  <?php if(has_permission('offers','','create')){ ?>
+                  <li <?php if($disable_convert){ echo 'data-toggle="tooltip" title="'._l($help_text,_l('offer_convert_offer')).'"';} ?>><a href="#" <?php if($disable_convert){ echo 'style="cursor:not-allowed;" onclick="return false;"';} else {echo 'data-template="offer" onclick="offer_convert_template(this); return false;"';} ?>><?php echo _l('offer_convert_offer'); ?></a></li>
                   <?php } ?>
                   <?php if(has_permission('invoices','','create')){ ?>
                   <li <?php if($disable_convert){ echo 'data-toggle="tooltip" title="'._l($help_text,_l('offer_convert_invoice')).'"';} ?>><a href="#" <?php if($disable_convert){ echo 'style="cursor:not-allowed;" onclick="return false;"';} else {echo 'data-template="invoice" onclick="offer_convert_template(this); return false;"';} ?>><?php echo _l('offer_convert_invoice'); ?></a></li>
@@ -196,8 +196,8 @@
             </div>
             <?php } ?>
             <?php } else {
-               if($offer->estimate_id != NULL){
-                echo '<a href="'.admin_url('estimates/list_estimates/'.$offer->estimate_id).'" class="btn btn-info">'.format_estimate_number($offer->estimate_id).'</a>';
+               if($offer->id != NULL){
+                echo '<a href="'.admin_url('offers/list_offers/'.$offer->id).'" class="btn btn-info">'.format_offer_number($offer->id).'</a>';
                } else {
                 echo '<a href="'.admin_url('invoices/list_invoices/'.$offer->invoice_id).'" class="btn btn-info">'.format_invoice_number($offer->invoice_id).'</a>';
                }
@@ -284,33 +284,114 @@
                   <?php } ?>
                   <?php } ?>
                   <div class="clearfix"></div>
-                  <?php if(isset($offer_merge_fields)){ ?>
-                  <p class="bold text-right"><a href="#" onclick="slideToggle('.avilable_merge_fields'); return false;"><?php echo _l('available_merge_fields'); ?></a></p>
-                  <hr class="hr-panel-heading" />
-                  <div class="hide avilable_merge_fields mtop15">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <ul class="list-group">
+
+                  <div class="row">
+                     <div class="col-md-12">
+                        <div class="table-responsive">
                               <?php
-                                 foreach($offer_merge_fields as $field){
-                                    foreach($field as $f){
-                                      echo '<li class="list-group-item"><b>'.$f['name'].'</b> <a href="#" class="pull-right" onclick="insert_offer_merge_field(this); return false;">'.$f['key'].'</a></li>';
-                                   }
-                                }
-                             ?>
-                           </ul>
+                                 $items = get_items_table_data($offer, 'offer', 'html', true);
+                                 echo $items->table();
+                              ?>
                         </div>
                      </div>
-                  </div>
-                  <?php } ?>
-                  <div class="editable offer tc-content" id="offer_content_area" style="border:1px solid #d2d2d2;min-height:70px;border-radius:4px;">
-                     <?php if(empty($offer->content)){
-                        echo '<span class="text-danger text-uppercase mtop15 editor-add-content-notice"> ' . _l('click_to_add_content') . '</span>';
-                        } else {
-                        echo $offer->content;
+                     <div class="col-md-5 col-md-offset-7">
+                        <table class="table text-right">
+                           <tbody>
+                              <tr id="subtotal">
+                                 <td><span class="bold"><?php echo _l('offer_subtotal'); ?></span>
+                                 </td>
+                                 <td class="subtotal">
+                                    <?php echo app_format_money($offer->subtotal, $offer->currency_name); ?>
+                                 </td>
+                              </tr>
+                              <?php if(is_sale_discount_applied($offer)){ ?>
+                              <tr>
+                                 <td>
+                                    <span class="bold"><?php echo _l('offer_discount'); ?>
+                                    <?php if(is_sale_discount($offer,'percent')){ ?>
+                                    (<?php echo app_format_number($offer->discount_percent,true); ?>%)
+                                    <?php } ?></span>
+                                 </td>
+                                 <td class="discount">
+                                    <?php echo '-' . app_format_money($offer->discount_total, $offer->currency_name); ?>
+                                 </td>
+                              </tr>
+                              <?php } ?>
+                              <?php
+                                 foreach($items->taxes() as $tax){
+                                     echo '<tr class="tax-area"><td class="bold">'.$tax['taxname'].' ('.app_format_number($tax['taxrate']).'%)</td><td>'.app_format_money($tax['total_tax'], $offer->currency_name).'</td></tr>';
+                                 }
+                                 ?>
+                              <?php if((int)$offer->adjustment != 0){ ?>
+                              <tr>
+                                 <td>
+                                    <span class="bold"><?php echo _l('offer_adjustment'); ?></span>
+                                 </td>
+                                 <td class="adjustment">
+                                    <?php echo app_format_money($offer->adjustment, $offer->currency_name); ?>
+                                 </td>
+                              </tr>
+                              <?php } ?>
+                              <tr>
+                                 <td><span class="bold"><?php echo _l('offer_total'); ?></span>
+                                 </td>
+                                 <td class="total">
+                                    <?php echo app_format_money($offer->total, $offer->currency_name); ?>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </div>
+                     <?php if(count($offer->attachments) > 0){ ?>
+                     <div class="clearfix"></div>
+                     <hr />
+                     <div class="col-md-12">
+                        <p class="bold text-muted"><?php echo _l('offer_files'); ?></p>
+                     </div>
+                     <?php foreach($offer->attachments as $attachment){
+                        $attachment_url = site_url('download/file/sales_attachment/'.$attachment['attachment_key']);
+                        if(!empty($attachment['external'])){
+                          $attachment_url = $attachment['external_link'];
                         }
                         ?>
+                     <div class="mbot15 row col-md-12" data-attachment-id="<?php echo $attachment['id']; ?>">
+                        <div class="col-md-8">
+                           <div class="pull-left"><i class="<?php echo get_mime_class($attachment['filetype']); ?>"></i></div>
+                           <a href="<?php echo $attachment_url; ?>" target="_blank"><?php echo $attachment['file_name']; ?></a>
+                           <br />
+                           <small class="text-muted"> <?php echo $attachment['filetype']; ?></small>
+                        </div>
+                        <div class="col-md-4 text-right">
+                           <?php if($attachment['visible_to_customer'] == 0){
+                              $icon = 'fa fa-toggle-off';
+                              $tooltip = _l('show_to_customer');
+                              } else {
+                              $icon = 'fa fa-toggle-on';
+                              $tooltip = _l('hide_from_customer');
+                              }
+                              ?>
+                           <a href="#" data-toggle="tooltip" onclick="toggle_file_visibility(<?php echo $attachment['id']; ?>,<?php echo $offer->id; ?>,this); return false;" data-title="<?php echo $tooltip; ?>"><i class="<?php echo $icon; ?>" aria-hidden="true"></i></a>
+                           <?php if($attachment['staffid'] == get_staff_user_id() || is_admin()){ ?>
+                           <a href="#" class="text-danger" onclick="delete_offer_attachment(<?php echo $attachment['id']; ?>); return false;"><i class="fa fa-times"></i></a>
+                           <?php } ?>
+                        </div>
+                     </div>
+                     <?php } ?>
+                     <?php } ?>
+                     <?php if($offer->clientnote != ''){ ?>
+                     <div class="col-md-12 mtop15">
+                        <p class="bold text-muted"><?php echo _l('offer_note'); ?></p>
+                        <p><?php echo $offer->clientnote; ?></p>
+                     </div>
+                     <?php } ?>
+                     <?php if($offer->terms != ''){ ?>
+                     <div class="col-md-12 mtop15">
+                        <p class="bold text-muted"><?php echo _l('terms_and_conditions'); ?></p>
+                        <p><?php echo $offer->terms; ?></p>
+                     </div>
+                     <?php } ?>
                   </div>
+
                       <?php if(!empty($offer->signature)) { ?>
                         <div class="row mtop25">
                            <div class="col-md-6 col-md-offset-6 text-right">
@@ -347,7 +428,7 @@
                   <?php echo form_open(admin_url('offers/add_note/'.$offer->id),array('id'=>'sales-notes','class'=>'offer-notes-form')); ?>
                   <?php echo render_textarea('description'); ?>
                   <div class="text-right">
-                     <button type="submit" class="btn btn-info mtop15 mbot15"><?php echo _l('estimate_add_note'); ?></button>
+                     <button type="submit" class="btn btn-info mtop15 mbot15"><?php echo _l('offer_add_note'); ?></button>
                   </div>
                   <?php echo form_close(); ?>
                   <hr />
@@ -404,7 +485,7 @@
    </div>
 </div>
 <div id="modal-wrapper"></div>
-<?php $this->load->view('admin/offers/send_offer_to_email_template'); ?>
+<?php // $this->load->view('admin/offers/send_offer_to_email_template'); ?>
 <script>
    init_btn_with_tooltips();
    init_datepicker();

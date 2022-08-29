@@ -467,7 +467,7 @@ class Offer_mail_template
             $rel_type = $this->get_default_property_value('rel_type', $template, $params);
         }
 
-        if ($rel_type != 'proposal' && $rel_type != 'lead') {
+        if ($rel_type != 'offer' && $rel_type != 'lead') {
             if ($for === 'customer' && total_rows(db_prefix() . 'contacts', ['email' => $email]) > 0) {
                 $this->ci->db->where('email', $email);
 
@@ -490,17 +490,17 @@ class Offer_mail_template
             $this->ci->db->select('default_language');
             $this->ci->db->where('id', $this->get_rel_id());
             $lead = $this->ci->db->get(db_prefix() . 'leads')->row();
-        } elseif ($rel_type == 'proposal') {
+        } elseif ($rel_type == 'offer') {
             $this->ci->db->select('rel_type, rel_id');
             $this->ci->db->where('id', $this->get_rel_id());
-            $proposal = $this->ci->db->get(db_prefix() . 'proposals')->row();
-            if ($proposal && $proposal->rel_type == 'lead') {
+            $offer = $this->ci->db->get(db_prefix() . 'offers')->row();
+            if ($offer && $offer->rel_type == 'lead') {
                 $this->ci->db->select('default_language')
-                ->where('id', $proposal->rel_id);
+                ->where('id', $offer->rel_id);
 
                 $lead = $this->ci->db->get(db_prefix() . 'leads')->row();
-            } elseif ($proposal && $proposal->rel_type == 'customer') {
-                $customerDefault = get_client_default_language($proposal->rel_id);
+            } elseif ($offer && $offer->rel_type == 'customer') {
+                $customerDefault = get_client_default_language($offer->rel_id);
                 if (!empty($customerDefault)) {
                     $language = $customerDefault;
                 }
