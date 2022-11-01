@@ -209,9 +209,9 @@
                <?php } ?>
             </div>
             <?php } ?>
-            <?php if(!empty($offer->clientnote)){ ?>
+            <?php if(!empty($offer->client_note)){ ?>
             <div class="col-md-12 offer-html-note">
-               <b><?php echo _l('offer_note'); ?></b><br /><br /><?php echo $offer->clientnote; ?>
+               <b><?php echo _l('offer_note'); ?></b><br /><br /><?php echo $offer->client_note; ?>
             </div>
             <?php } ?>
             <?php if(!empty($offer->terms)){ ?>

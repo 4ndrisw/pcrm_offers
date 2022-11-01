@@ -107,7 +107,7 @@ foreach ($rResult as $aRow) {
     $row = [];
 
     //$numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
-    $numberOutput = '<a href="' . admin_url('offers#' . $aRow[db_prefix() . 'offers.id']) . '"  target="_blank">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . ' AA</a>';
+    $numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
 
     $numberOutput .= '<div class="row-options">';
 
@@ -119,7 +119,7 @@ foreach ($rResult as $aRow) {
 
     $row[] = $numberOutput;
 
-    $row[] = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . $aRow['subject'] . ' bb</a>';
+    $row[] = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . $aRow['subject'] . '</a>';
 
     if ($aRow['rel_type'] == 'lead') {
         $toOutput = '<a href="#" onclick="init_lead(' . $aRow['rel_id'] . ');return false;" target="_blank" data-toggle="tooltip" data-title="' . _l('lead') . '">' . $aRow['offer_to'] . '</a>';

@@ -71,7 +71,7 @@ class Myoffer extends ClientsController
             $number_word_lang_rel_id = $offer->rel_id;
         }
         $this->load->library('app_number_to_word', [
-            'clientid' => $number_word_lang_rel_id,
+            'client_id' => $number_word_lang_rel_id,
         ],'numberword');
 
         $this->disableNavigation();

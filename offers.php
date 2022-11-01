@@ -90,7 +90,7 @@ function offers_global_search_result_query($result, $q, $limit)
 
         // offers
         $CI->db->select()->from(db_prefix() . 'offers')->like(db_prefix() . 'clients.company', $q)->or_like(db_prefix() . 'offers.formatted_number', $q)->limit($limit);
-        $CI->db->join(db_prefix() . 'clients',db_prefix() . 'offers.clientid='.db_prefix() .'clients.userid', 'left');
+        $CI->db->join(db_prefix() . 'clients',db_prefix() . 'offers.client_id='.db_prefix() .'clients.userid', 'left');
         $CI->db->order_by(db_prefix() . 'clients.company', 'ASC');
 
         $result[] = [

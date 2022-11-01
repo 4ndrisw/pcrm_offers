@@ -96,7 +96,9 @@ class Offers_model extends App_Model
 
         $data  = $hook['data'];
         $items = $hook['items'];
-
+        unset($data['tags'],$data['item_select'], $data['description'], $data['long_description'],
+              $data['quantity'], $data['unit'],$data['rate']
+             );
         $this->db->insert(db_prefix() . 'offers', $data);
         $insert_id = $this->db->insert_id();
 
@@ -375,7 +377,7 @@ class Offers_model extends App_Model
                 */
             }
 
-            $offer->client = $this->clients_model->get($offer->clientid);
+            $offer->client = $this->clients_model->get($offer->client_id);
 
             if (!$offer->client) {
                 $offer->client          = new stdClass();

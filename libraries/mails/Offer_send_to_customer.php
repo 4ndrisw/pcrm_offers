@@ -40,7 +40,7 @@ class Offer_send_to_customer extends App_mail_template
 
         $this->to($this->contact->email)
         ->set_rel_id($this->offer->id)
-        ->set_merge_fields('client_merge_fields', $this->offer->clientid, $this->contact->id)
+        ->set_merge_fields('client_merge_fields', $this->offer->client_id, $this->contact->id)
         ->set_merge_fields('offer_merge_fields', $this->offer->id);
     }
 }

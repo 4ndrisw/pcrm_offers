@@ -1,17 +1,18 @@
 <?php
+defined('BASEPATH') or exit('No direct script access allowed');
 
 use modules\offers\services\offers\OffersPipeline;
 
-defined('BASEPATH') or exit('No direct script access allowed');
 
 class Offers extends AdminController
 {
+    
     public function __construct()
     {
         parent::__construct();
         $this->load->model('offers_model');
         $this->load->model('currencies_model');
-        include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_mail_template.php');
+        include_once(module_libs_path('offers') . 'mails/Offer_mail_template.php');
         //$this->load->library('module_name/library_name'); 
         $this->load->library('offer_mail_template'); 
         //include_once(module_libs_path(OFFERS_MODULE_NAME) . 'mails/Offer_send_to_customer.php');
@@ -23,9 +24,6 @@ class Offers extends AdminController
 
     public function index($offer_id = '')
     {
-        if (is_numeric($offer_id)) {
-            redirect(admin_url('offers/#' . $offer_id));
-        }
         $this->list_offers($offer_id);
     }
 
@@ -36,6 +34,8 @@ class Offers extends AdminController
         if (!has_permission('offers', '', 'view') && !has_permission('offers', '', 'view_own') && get_option('allow_staff_view_estimates_assigned') == 0) {
             access_denied('offers');
         }
+        
+        log_activity($offer_id);
 
         $isPipeline = $this->session->userdata('offers_pipeline') == 'true';
 
@@ -66,7 +66,11 @@ class Offers extends AdminController
             $data['years']                 = $this->offers_model->get_offers_years();
             
             log_activity(json_encode($data));
-            $this->load->view('admin/offers/manage', $data);
+            if($offer_id){
+                $this->load->view('admin/offers/manage_small_table', $data);
+            }else{
+                $this->load->view('admin/offers/manage_table', $data);
+            }
         }
     }
 
@@ -80,6 +84,19 @@ class Offers extends AdminController
             ajax_access_denied();
         }
         $this->app->get_table_data(module_views_path('offers', 'tables/offers'));
+        
+    }
+    
+    public function small_table()
+    {
+        if (
+            !has_permission('offers', '', 'view')
+            && !has_permission('offers', '', 'view_own')
+            && get_option('allow_staff_view_offers_assigned') == 0
+        ) {
+            ajax_access_denied();
+        }
+        $this->app->get_table_data(module_views_path('offers', 'tables/offers_small_table'));
         
     }
 

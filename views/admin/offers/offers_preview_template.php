@@ -378,10 +378,10 @@
                      </div>
                      <?php } ?>
                      <?php } ?>
-                     <?php if($offer->clientnote != ''){ ?>
+                     <?php if($offer->client_note != ''){ ?>
                      <div class="col-md-12 mtop15">
                         <p class="bold text-muted"><?php echo _l('offer_note'); ?></p>
-                        <p><?php echo $offer->clientnote; ?></p>
+                        <p><?php echo $offer->client_note; ?></p>
                      </div>
                      <?php } ?>
                      <?php if($offer->terms != ''){ ?>

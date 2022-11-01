@@ -30,7 +30,7 @@
 </div>
 <?php $this->load->view('admin/invoice_items/item'); ?>
 <script>
-    init_ajax_search('customer','#clientid.ajax-search');
+    init_ajax_search('customer','#client_id.ajax-search');
     init_ajax_search('items','#item_select.ajax-search',undefined,admin_url+'items/search');
     custom_fields_hyperlink();
     init_selectpicker();
@@ -50,7 +50,7 @@
     <?php } ?>
     $('input[name="adjustment"]').val('<?php echo $offer->adjustment; ?>');
     $('input[name="show_quantity_as"][value="<?php echo $offer->show_quantity_as; ?>"]').prop('checked',true).change();
-    $('#convert_to_offer #clientid').change();
+    $('#convert_to_offer #client_id').change();
     // Trigger item select width fix
     $('#convert_to_offer').on('shown.bs.modal', function(){
         $('#item_select').trigger('change')

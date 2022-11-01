@@ -244,10 +244,10 @@ function validate_offer_form(selector) {
     selector = typeof (selector) == 'undefined' ? '#offer-form' : selector;
 
     appValidateForm($(selector), {
-        clientid: {
+        client_id: {
             required: {
                 depends: function () {
-                    var customerRemoved = $('select#clientid').hasClass('customer-removed');
+                    var customerRemoved = $('select#client_id').hasClass('customer-removed');
                     return !customerRemoved;
                 }
             }
@@ -384,5 +384,3 @@ function reload_offers_tables() {
         }
     });
 }
-
-
