@@ -22,8 +22,8 @@
          <?php
          echo form_open($this->uri->uri_string(),array('id'=>'offer-form','class'=>'_transaction_form offer-form'));
 
-         if($this->input->get('estimate_request_id')) {
-             echo form_hidden('estimate_request_id', $this->input->get('estimate_request_id'));
+         if($this->input->get('offer_request_id')) {
+             echo form_hidden('offer_request_id', $this->input->get('offer_request_id'));
          }
          ?>
 
@@ -127,8 +127,8 @@
                                  <select name="discount_type" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                                   <option value="" selected><?php echo _l('no_discount'); ?></option>
                                   <option value="before_tax" <?php
-                                  if(isset($estimate)){ if($estimate->discount_type == 'before_tax'){ echo 'selected'; }}?>><?php echo _l('discount_type_before_tax'); ?></option>
-                                  <option value="after_tax" <?php if(isset($estimate)){if($estimate->discount_type == 'after_tax'){echo 'selected';}} ?>><?php echo _l('discount_type_after_tax'); ?></option>
+                                  if(isset($offer)){ if($offer->discount_type == 'before_tax'){ echo 'selected'; }}?>><?php echo _l('discount_type_before_tax'); ?></option>
+                                  <option value="after_tax" <?php if(isset($offer)){if($offer->discount_type == 'after_tax'){echo 'selected';}} ?>><?php echo _l('discount_type_after_tax'); ?></option>
                                 </select>
                               </div>
                             </div>
@@ -155,7 +155,7 @@
                                  <?php
                                     $disabled = '';
                                     if(isset($offer)){
-                                     if($offer->estimate_id != NULL || $offer->invoice_id != NULL){
+                                     if($offer->id != NULL || $offer->invoice_id != NULL){
                                        $disabled = 'disabled';
                                      }
                                     }
@@ -230,7 +230,7 @@
          </div>
          <div class="col-md-12">
             <div class="panel_s">
-               <?php $this->load->view('admin/estimates/_add_edit_items'); ?>
+               <?php $this->load->view('admin/offers/_add_edit_items'); ?>
             </div>
          </div>
          <?php echo form_close(); ?>
