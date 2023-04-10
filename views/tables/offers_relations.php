@@ -83,7 +83,7 @@ foreach ($rResult as $aRow) {
     $amount = app_format_money($aRow['total'], ($aRow['currency'] != 0 ? get_currency($aRow['currency']) : $baseCurrency));
 
     if ($aRow['invoice_id']) {
-        $amount .= '<br /> <span class="hide"> - </span><span class="text-success">' . _l('estimate_invoiced') . '</span>';
+        $amount .= '<br /> <span class="hide"> - </span><span class="text-success">' . _l('offer_invoiced') . '</span>';
     }
 
     $row[] = $amount;
