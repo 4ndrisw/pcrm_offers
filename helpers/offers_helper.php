@@ -221,7 +221,7 @@ function get_offer_item_taxes($itemid)
 /**
  * Calculate offer percent by status
  * @param  mixed $status          offer status
- * @param  mixed $total_estimates in case the total is calculated in other place
+ * @param  mixed $total_offers in case the total is calculated in other place
  * @return array
  */
 function get_offers_percent_by_status($status, $total_offers = '')
