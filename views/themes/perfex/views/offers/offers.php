@@ -30,7 +30,7 @@
                 <?php echo format_offer_number($offer['id']); ?>
                 <?php
                 if ($offer['invoice_id']) {
-                  echo '<br /><span class="text-success offer-invoiced">' . _l('estimate_invoiced') . '</span>';
+                  echo '<br /><span class="text-success offer-invoiced">' . _l('offer_invoiced') . '</span>';
                 }
                 ?>
               </a>
@@ -42,9 +42,9 @@
                 if ($offer['invoice_id'] != NULL) {
                   $invoice = $this->invoices_model->get($offer['invoice_id']);
                   echo '<br /><a href="' . site_url('invoice/' . $invoice->id . '/' . $invoice->hash) . '" target="_blank" class="td-offer-invoice-url">' . format_invoice_number($invoice->id) . '</a>';
-                } else if ($offer['estimate_id'] != NULL) {
-                  $estimate = $this->estimates_model->get($offer['estimate_id']);
-                  echo '<br /><a href="' . site_url('estimate/' . $estimate->id . '/' . $estimate->hash) . '" target="_blank" class="td-offer-estimate-url">' . format_estimate_number($estimate->id) . '</a>';
+                } else if ($offer['offer_id'] != NULL) {
+                  $offer = $this->offers_model->get($offer['offer_id']);
+                  echo '<br /><a href="' . site_url('offer/' . $offer->id . '/' . $offer->hash) . '" target="_blank" class="td-offer-offer-url">' . format_offer_number($offer->id) . '</a>';
                 }
                 ?>
               </td>
