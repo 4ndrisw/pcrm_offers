@@ -1,12 +1,12 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php if ($offer['status'] == $status) { ?>
-<li data-offer-id="<?php echo $offer['id']; ?>" class="<?php if($offer['invoice_id'] != NULL || $offer['estimate_id'] != NULL){echo 'not-sortable';} ?>">
+<li data-offer-id="<?php echo $offer['id']; ?>" class="<?php if($offer['invoice_id'] != NULL || $offer['offer_id'] != NULL){echo 'not-sortable';} ?>">
    <div class="panel-body">
       <div class="row">
          <div class="col-md-12">
             <h4 class="bold pipeline-heading">
                <a href="<?php echo admin_url('offers/list_offers/'.$offer['id']); ?>" data-toggle="tooltip" data-title="<?php echo $offer['subject']; ?>" onclick="offer_pipeline_open(<?php echo $offer['id']; ?>); return false;"><?php echo format_offer_number($offer['id']); ?></a>
-               <?php if(has_permission('estimates','','edit')){ ?>
+               <?php if(has_permission('offers','','edit')){ ?>
                <a href="<?php echo admin_url('offers/offer/'.$offer['id']); ?>" target="_blank" class="pull-right"><small><i class="fa fa-pencil-square-o" aria-hidden="true"></i></small></a>
                <?php } ?>
             </h4>
