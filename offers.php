@@ -21,8 +21,8 @@ hooks()->add_action('admin_init', 'offers_permissions');
 hooks()->add_action('admin_init', 'offers_settings_tab');
 hooks()->add_action('clients_init', 'offers_clients_area_menu_items');
 
-hooks()->add_action('app_admin_head', 'offers_head_component');
-hooks()->add_action('app_admin_footer', 'offers_footer_js_component');
+//hooks()->add_action('app_admin_head', 'offers_head_component');
+//hooks()->add_action('app_admin_footer', 'offers_footer_js_component');
 
 hooks()->add_action('staff_member_deleted', 'offers_staff_member_deleted');
 
