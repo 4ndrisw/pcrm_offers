@@ -56,10 +56,10 @@ class Offers_model extends App_Model
             unset($data['custom_fields']);
         }
 
-        $estimateRequestID = false;
-        if (isset($data['estimate_request_id'])) {
-            $estimateRequestID = $data['estimate_request_id'];
-            unset($data['estimate_request_id']);
+        $offerRequestID = false;
+        if (isset($data['offer_request_id'])) {
+            $offerRequestID = $data['offer_request_id'];
+            unset($data['offer_request_id']);
         }
 
         $data['address'] = trim($data['address']);
@@ -103,11 +103,11 @@ class Offers_model extends App_Model
         $insert_id = $this->db->insert_id();
 
         if ($insert_id) {
-            if ($estimateRequestID !== false && $estimateRequestID != '') {
-                $this->load->model('estimate_request_model');
-                $completedStatus = $this->estimate_request_model->get_status_by_flag('completed');
-                $this->estimate_request_model->update_request_status([
-                    'requestid' => $estimateRequestID,
+            if ($offerRequestID !== false && $offerRequestID != '') {
+                $this->load->model('offer_request_model');
+                $completedStatus = $this->offer_request_model->get_status_by_flag('completed');
+                $this->offer_request_model->update_request_status([
+                    'requestid' => $offerRequestID,
                     'status'    => $completedStatus->id,
                 ]);
             }
@@ -611,7 +611,7 @@ class Offers_model extends App_Model
             'hash',
             'status',
             'invoice_id',
-            'estimate_id',
+            'offer_id',
             'is_expiry_notified',
             'date_converted',
             'signature',
