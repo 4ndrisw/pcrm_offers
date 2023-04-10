@@ -34,7 +34,7 @@ if (!$CI->db->table_exists(db_prefix() . 'offers')) {
       `phone` varchar(50) DEFAULT NULL,
       `allow_comments` tinyint(1) NOT NULL DEFAULT 1,
       `status` int(11) NOT NULL,
-      `estimate_id` int(11) DEFAULT NULL,
+      `offer_id` int(11) DEFAULT NULL,
       `invoice_id` int(11) DEFAULT NULL,
       `date_converted` datetime DEFAULT NULL,
       `pipeline_order` int(11) DEFAULT 1,
