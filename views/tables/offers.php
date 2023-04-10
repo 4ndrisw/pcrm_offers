@@ -106,8 +106,15 @@ $rResult = $result['rResult'];
 foreach ($rResult as $aRow) {
     $row = [];
 
-    //$numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
-    $numberOutput = '<a href="' . admin_url('offers#' . $aRow[db_prefix() . 'offers.id']) . '"  target="_blank">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . ' AA</a>';
+    //$numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']. '#' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
+    //$numberOutput = '<a href="' . admin_url('offers#' . $aRow[db_prefix() . 'offers.id']) . '" target="_blank">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . ' AA</a>';
+    //$numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']. '#' . $aRow[db_prefix() . 'offers.id']) . '" target="_blank">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
+    //$numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']. '#' . $aRow[db_prefix() . 'offers.id']) . '">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
+
+
+
+    // If is from client area table
+    $numberOutput = '<a href="' . admin_url('offers/list_offers/' . $aRow[db_prefix() . 'offers.id']. '#' . $aRow[db_prefix() . 'offers.id']) . '" onclick="init_offer(' . $aRow[db_prefix() . 'offers.id'] . '); return false;">' . format_offer_number($aRow[db_prefix() . 'offers.id']) . '</a>';
 
     $numberOutput .= '<div class="row-options">';
 
@@ -132,7 +139,7 @@ foreach ($rResult as $aRow) {
     $amount = app_format_money($aRow['total'], ($aRow['currency'] != 0 ? get_currency($aRow['currency']) : $baseCurrency));
 
     if ($aRow['invoice_id']) {
-        $amount .= '<br /> <span class="hide"> - </span><span class="text-success">' . _l('estimate_invoiced') . '</span>';
+        $amount .= '<br /> <span class="hide"> - </span><span class="text-success">' . _l('offer_invoiced') . '</span>';
     }
 
     $row[] = $amount;
