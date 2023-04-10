@@ -494,5 +494,5 @@
    init_tabs_scrollable();
      // defined in manage offers
      offer_id = '<?php echo $offer->id; ?>';
-     init_offer_editor();
+     //init_offer_editor();
 </script>
