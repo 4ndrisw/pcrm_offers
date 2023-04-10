@@ -31,7 +31,7 @@ class Offers extends AdminController
     {
         close_setup_menu();
 
-        if (!has_permission('offers', '', 'view') && !has_permission('offers', '', 'view_own') && get_option('allow_staff_view_estimates_assigned') == 0) {
+        if (!has_permission('offers', '', 'view') && !has_permission('offers', '', 'view_own') && get_option('allow_staff_view_offers_assigned') == 0) {
             access_denied('offers');
         }
         
@@ -66,11 +66,14 @@ class Offers extends AdminController
             $data['years']                 = $this->offers_model->get_offers_years();
             
             log_activity(json_encode($data));
+            /*
             if($offer_id){
                 $this->load->view('admin/offers/manage_small_table', $data);
             }else{
                 $this->load->view('admin/offers/manage_table', $data);
             }
+            */
+                $this->load->view('admin/offers/manage_table', $data);
         }
     }
 
@@ -124,7 +127,7 @@ class Offers extends AdminController
             $this->offers_model->clear_signature($id);
         }
 
-        redirect(admin_url('offers/list_offers/' . $id));
+        redirect(admin_url('offers/list_offers/' . $id .'#' . $id .'#' . $id));
     }
 
     public function sync_data()
@@ -176,7 +179,7 @@ class Offers extends AdminController
                     if ($this->set_offer_pipeline_autoload($id)) {
                         redirect(admin_url('offers'));
                     } else {
-                        redirect(admin_url('offers/list_offers/' . $id));
+                        redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
                     }
                 }
             } else {
@@ -190,7 +193,7 @@ class Offers extends AdminController
                 if ($this->set_offer_pipeline_autoload($id)) {
                     redirect(admin_url('offers'));
                 } else {
-                    redirect(admin_url('offers/list_offers/' . $id));
+                    redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
                 }
             }
         }
@@ -203,7 +206,7 @@ class Offers extends AdminController
                 blank_page(_l('offer_not_found'));
             }
 
-            $data['estimate']    = $data['offer'];
+            $data['offer']    = $data['offer'];
             $data['is_offer'] = true;
             $title               = _l('edit', _l('offer_lowercase'));
         }
@@ -255,7 +258,7 @@ class Offers extends AdminController
         if ($this->set_offer_pipeline_autoload($id)) {
             redirect($_SERVER['HTTP_REFERER']);
         } else {
-            redirect(admin_url('offers/list_offers/' . $id));
+            redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
         }
     }
 
@@ -266,7 +269,7 @@ class Offers extends AdminController
             $this->db->update(db_prefix() . 'offers', get_acceptance_info_array(true));
         }
 
-        redirect(admin_url('offers/list_offers/' . $id));
+        redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
     }
 
     public function pdf($id)
@@ -341,7 +344,7 @@ class Offers extends AdminController
         ];
 
         $merge_fields = array_merge($merge_fields, $this->app_merge_fields->get_flat('offers', 'other', '{email_signature}'));
-
+        $data['offers_sale_agents'] = $this->offers_model->get_sale_agents();
         $data['offer_statuses']     = $this->offers_model->get_statuses();
         $data['members']               = $this->staff_model->get('', ['active' => 1]);
         $data['offer_merge_fields'] = $merge_fields;
@@ -371,33 +374,33 @@ class Offers extends AdminController
         }
     }
 
-    public function convert_to_estimate($id)
+    public function convert_to_offer($id)
     {
-        if (!has_permission('estimates', '', 'create')) {
-            access_denied('estimates');
+        if (!has_permission('offers', '', 'create')) {
+            access_denied('offers');
         }
         if ($this->input->post()) {
-            $this->load->model('estimates_model');
-            $estimate_id = $this->estimates_model->add($this->input->post());
-            if ($estimate_id) {
-                set_alert('success', _l('offer_converted_to_estimate_success'));
+            $this->load->model('offers_model');
+            $offer_id = $this->offers_model->add($this->input->post());
+            if ($offer_id) {
+                set_alert('success', _l('offer_converted_to_offer_success'));
                 $this->db->where('id', $id);
                 $this->db->update(db_prefix() . 'offers', [
-                    'estimate_id' => $estimate_id,
+                    'offer_id' => $offer_id,
                     'status'      => 3,
                 ]);
-                log_activity('Offer Converted to Estimate [EstimateID: ' . $estimate_id . ', OfferID: ' . $id . ']');
+                log_activity('Offer Converted to Estimate [EstimateID: ' . $offer_id . ', OfferID: ' . $id . ']');
 
-                hooks()->do_action('offer_converted_to_estimate', ['offer_id' => $id, 'estimate_id' => $estimate_id]);
+                hooks()->do_action('offer_converted_to_offer', ['offer_id' => $id, 'offer_id' => $offer_id]);
 
-                redirect(admin_url('estimates/estimate/' . $estimate_id));
+                redirect(admin_url('offers/offer/' . $offer_id));
             } else {
-                set_alert('danger', _l('offer_converted_to_estimate_fail'));
+                set_alert('danger', _l('offer_converted_to_offer_fail'));
             }
             if ($this->set_offer_pipeline_autoload($id)) {
                 redirect(admin_url('offers'));
             } else {
-                redirect(admin_url('offers/list_offers/' . $id));
+                redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
             }
         }
     }
@@ -426,7 +429,7 @@ class Offers extends AdminController
             if ($this->set_offer_pipeline_autoload($id)) {
                 redirect(admin_url('offers'));
             } else {
-                redirect(admin_url('offers/list_offers/' . $id));
+                redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
             }
         }
     }
@@ -469,7 +472,7 @@ class Offers extends AdminController
         $this->load->view('admin/offers/invoice_convert_template', $data);
     }
 
-    public function get_estimate_convert_data($id)
+    public function get_offer_convert_data($id)
     {
         $this->load->model('taxes_model');
         $data['taxes']         = $this->taxes_model->get();
@@ -489,8 +492,8 @@ class Offers extends AdminController
         $data['offer']  = $this->offers_model->get($id);
         $data['add_items'] = $this->_parse_items($data['offer']);
 
-        $this->load->model('estimates_model');
-        $data['estimate_statuses'] = $this->estimates_model->get_statuses();
+        $this->load->model('offers_model');
+        $data['offer_statuses'] = $this->offers_model->get_statuses();
         if ($data['offer']->rel_type == 'lead') {
             $this->db->where('leadid', $data['offer']->rel_id);
             $data['customer_id'] = $this->db->get(db_prefix() . 'clients')->row()->userid;
@@ -503,7 +506,7 @@ class Offers extends AdminController
             'rel_id'     => $id,
         ];
 
-        $this->load->view('admin/offers/estimate_convert_template', $data);
+        $this->load->view('admin/offers/offer_convert_template', $data);
     }
 
     private function _parse_items($offer)
@@ -561,7 +564,7 @@ class Offers extends AdminController
             if ($this->set_offer_pipeline_autoload($id)) {
                 redirect($_SERVER['HTTP_REFERER']);
             } else {
-                redirect(admin_url('offers/list_offers/' . $id));
+                redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
             }
         }
     }
@@ -582,7 +585,7 @@ class Offers extends AdminController
         if ($this->set_offer_pipeline_autoload($id)) {
             redirect(admin_url('offers'));
         } else {
-            redirect(admin_url('offers/list_offers/' . $id));
+            redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
         }
     }
 
@@ -600,7 +603,7 @@ class Offers extends AdminController
         if ($this->set_offer_pipeline_autoload($id)) {
             redirect(admin_url('offers'));
         } else {
-            redirect(admin_url('offers/list_offers/' . $id));
+            redirect(admin_url('offers/list_offers/' . $id .'#' . $id));
         }
     }
 
