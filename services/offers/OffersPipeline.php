@@ -66,7 +66,7 @@ class OffersPipeline extends AbstractKanban
         $has_permission_view = has_permission('offers', '', 'view');
         $noPermissionQuery   = get_offers_sql_where_staff(get_staff_user_id());
 
-        $this->ci->db->select('id,invoice_id,estimate_id,subject,rel_type,rel_id,total,date,open_till,currency,offer_to,status');
+        $this->ci->db->select('id,invoice_id,offer_id,subject,rel_type,rel_id,total,date,open_till,currency,offer_to,status');
         $this->ci->db->from('offers');
         $this->ci->db->where('status', $this->status);
 
