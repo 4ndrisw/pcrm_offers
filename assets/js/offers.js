@@ -1,6 +1,6 @@
 // Init single offer
 function init_offer(id) {
-    load_small_table_item(id, '#offer', 'offerid', 'offers/get_offer_data_ajax', '.table-offers');
+    load_small_table_item(id, '#offer', 'offer_id', 'offers/get_offer_data_ajax', '.table-offers');
 }
 
 /*
@@ -75,8 +75,8 @@ function toggle_offer_comment_edit(id) {
 function offer_convert_template(invoker) {
     var template = $(invoker).data('template');
     var html_helper_selector;
-    if (template == 'estimate') {
-        html_helper_selector = 'estimate';
+    if (template == 'offer') {
+        html_helper_selector = 'offer';
     } else if (template == 'invoice') {
         html_helper_selector = 'invoice';
     } else {
@@ -151,28 +151,28 @@ function delete_offer_attachment(id) {
     }
 }
 
-// Used when estimate is updated from pipeline. eq changed order or moved to another status
-function estimates_pipeline_update(ui, object) {
+// Used when offer is updated from pipeline. eq changed order or moved to another status
+function offers_pipeline_update(ui, object) {
     if (object === ui.item.parent()[0]) {
         var data = {
-            estimateid: $(ui.item).attr('data-estimate-id'),
+            offerid: $(ui.item).attr('data-offer-id'),
             status: $(ui.item.parent()[0]).attr('data-status-id'),
             order: [],
         };
 
         $.each($(ui.item).parents('.pipeline-status').find('li'), function (idx, el) {
-            var id = $(el).attr('data-estimate-id');
+            var id = $(el).attr('data-offer-id');
             if(id){
                 data.order.push([id, idx+1]);
             }
         });
 
-        check_kanban_empty_col('[data-estimate-id]');
+        check_kanban_empty_col('[data-offer-id]');
 
         setTimeout(function () {
-             $.post(admin_url + 'estimates/update_pipeline', data).done(function (response) {
+             $.post(admin_url + 'offers/update_pipeline', data).done(function (response) {
                 update_kan_ban_total_when_moving(ui,data.status);
-                estimate_pipeline();
+                offer_pipeline();
             });
         }, 200);
     }
